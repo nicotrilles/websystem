@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe Layout</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Header */
+        .header {
+            background-color: #0089fa;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: normal;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            height: calc(100vh - 60px);
+            background-color: #e0e0e0;
+            transition: width 0.3s ease;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Closed state */
+        .sidebar.closed {
+            width: 80px;
+        }
+
+        .sidebar.closed .sidebar-content {
+            display: none;
+        }
+        
+        .sidebar.closed .profile .label {
+            display: none;
+        }
+
+        .sidebar.closed .vertical-text {
+            display: block;
+        }
+
+        /* Open state */
+        .sidebar.open {
+            width: 250px;
+        }
+
+        .sidebar.open .sidebar-content {
+            display: block;
+        }
+
+        .sidebar.open .vertical-text {
+            display: none;
+        }
+
+        /* Hamburger/Close button */
+        .menu-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Vertical text for closed sidebar */
+        .vertical-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            display: none;
+        }
+
+        /* Sidebar content for open state */
+        .sidebar-content {
+            padding: 60px 20px 20px 20px;
+            display: none;
+            flex-grow: 1;
+        }
+        
+        .profile {
+            padding: 20px 0;
+            margin-top: auto;
+            border-top: 1px solid #ccc;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #d0d0d0;
+        }
+
+        .sidebar-menu a.active {
+            background-color: #009cf0;
+            color: white;
+        }
+        
+        /* Profile dropdown style */
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background-color: #d0d0d0;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-top: 60px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - 60px);
+        }
+
+        .main-content.sidebar-closed {
+            margin-left: 80px;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 250px;
+        }
+
+        .content-area {
+            background-color: #16a2ff;
+            height: calc(100vh - 120px);
+            margin: 0 20px 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            border-radius: 8px;
+        }
+
+        .content-section {
+            display: none;
+            padding: 40px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: calc(100vh - 160px);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #00a2ff;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 20px 20px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar.open {
+                width: 100%;
+            }
+            
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Card styles for content */
+        .feature-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary-custom {
+            background-color: #004cff;
+            border-color: #0041f3;
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #22c1ff;
+            border-color: #007eeb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>My Website</h1>
+    </div>
+
+    <div class="sidebar closed" id="sidebar">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <span id="menu-icon">☰</span>
+        </button>
+        <div class="vertical-text"></div>
+        <div class="sidebar-content">
+            <ul class="sidebar-menu">
+                <li><a href="#" onclick="showContent('home')" class="active">🏠 Home</a></li>
+                <li><a href="#" onclick="showContent('about')">ℹ️ About</a></li>
+                <li><a href="#" onclick="showContent('services')">⚙️ Services</a></li>
+                <li><a href="#" onclick="showContent('portfolio')">📁 Portfolio</a></li>
+                <li><a href="#" onclick="showContent('settings')">⚙️ Settings</a></li>
+            </ul>
+        </div>
+        <div class="dropdown profile">
+            <div
+                class="sidebar-item d-flex align-items-center gap-4"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <span>👤</span> <span class="label">Profile</span>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+      <!-- Logout Confirmation Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to logout?
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-danger">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+    <div class="main-content sidebar-closed" id="mainContent">
+        
+        <div id="home" class="content-section active">
+            <h2>Welcome to Our Website</h2>
+            <p class="lead">This is the home page with a responsive sidebar layout exactly matching your wireframes.</p>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <h5>Feature 1</h5>
+                        <p>Description of the first feature. Click the button below to learn more about our services.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('services')">Learn More</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <h5>Feature 2</h5>
+                        <p>Description of the second feature. Check out our portfolio to see our work in action.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('portfolio')">View Portfolio</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="about" class="content-section">
+            <h2>About Us</h2>
+            <p class="lead">Learn more about our company and mission.</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Our Story</h4>
+                    <p>We started our journey in 2020 with a simple mission: to create amazing digital experiences that help businesses grow and succeed in the modern world.</p>
+                    <button class="btn btn-primary-custom" onclick="showContent('team')">Meet Our Team</button>
+                </div>
+                <div class="col-md-6">
+                    <h4>Our Values</h4>
+                    <ul>
+                        <li>Innovation and creativity</li>
+                        <li>Quality and attention to detail</li>
+                        <li>Customer satisfaction</li>
+                        <li>Continuous improvement</li>
+                    </ul>
+                    <button class="btn btn-primary-custom" onclick="showContent('services')">Our Services</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="services" class="content-section">
+            <h2>Our Services</h2>
+            <p class="lead">We offer a comprehensive range of digital services.</p>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>🌐 Web Development</h5>
+                        <p>Custom websites and web applications built with modern technologies and best practices.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('portfolio')">View Projects</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>📱 Mobile Apps</h5>
+                        <p>Native and cross-platform mobile applications for iOS and Android devices.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('contact')">Get Quote</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>🎨 UI/UX Design</h5>
+                        <p>User-centered design solutions that create engaging and intuitive experiences.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('portfolio')">See Designs</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>☁️ Cloud Solutions</h5>
+                        <p>Scalable cloud infrastructure and deployment solutions for your applications.</p>
+                        <button class="btn btn-primary-custom" onclick="showContent('contact')">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="portfolio" class="content-section">
+            <h2>Our Portfolio</h2>
+            <p class="lead">Check out some of our recent projects and success stories.</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5>E-Commerce Platform</h5>
+                        <p>A full-featured online shopping platform with payment integration, inventory management, and analytics dashboard.</p>
+                        <div class="mb-3">
+                            <span class="badge bg-secondary me-2">React</span>
+                            <span class="badge bg-secondary me-2">Node.js</span>
+                            <span class="badge bg-secondary">MongoDB</span>
+                        </div>
+                        <button class="btn btn-primary-custom" onclick="viewProject('ecommerce')">View Details</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <h5>Healthcare Mobile App</h5>
+                        <p>A mobile application for healthcare providers with patient management, scheduling, and telemedicine features.</p>
+                        <div class="mb-3">
+                            <span class="badge bg-secondary me-2">Flutter</span>
+                            <span class="badge bg-secondary me-2">Firebase</span>
+                            <span class="badge bg-secondary">WebRTC</span>
+                        </div>
+                        <button class="btn btn-primary-custom" onclick="viewProject('healthcare')">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="settings" class="content-section">
+            <h2>Settings</h2>
+            <p class="lead">Customize your experience and manage your preferences.</p>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>Display Settings</h5>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="darkMode">
+                                <label class="form-check-label" for="darkMode">
+                                    Dark Mode
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifications" checked>
+                                <label class="form-check-label" for="notifications">
+                                    Enable Notifications
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary-custom" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-card">
+                        <h5>Account Settings</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Language</label>
+                            <select class="form-control">
+                                <option>English</option>
+                                <option>Spanish</option>
+                                <option>French</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Time Zone</label>
+                            <select class="form-control">
+                                <option>UTC-5 (Eastern)</option>
+                                <option>UTC-8 (Pacific)</option>
+                                <option>UTC+0 (GMT)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary-custom" onclick="updateAccount()">Update Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer id="contact" class="bg-dark text-light mt-5" style="padding: 0.5rem 0;">
+        <div class="container">
+            <div class="row align-items-center">
+            <div class="col-md-6" style="font-size: 0.8rem;">
+                <strong>Contact:</strong>
+                <span><i class="bi bi-envelope"></i> nico@example.com</span> |
+                <span><i class="bi bi-telephone"></i> +63 912 345 6789</span> |
+                <span><i class="bi bi-geo-alt"></i> Panabo City, Davao</span>
+            </div>
+            <div class="col-md-6 text-md-end" style="font-size: 0.9rem;">
+                <a href="https://www.facebook.com/login.php/" class="text-light me-2"><i class="bi bi-facebook"></i></a>
+                <a href="https://x.com/" class="text-light me-2"><i class="bi bi-twitter"></i></a>
+                <a href="https://www.instagram.com/" class="text-light me-2"><i class="bi bi-instagram"></i></a>
+            </div>
+            </div>
+            <div class="text-center mt-2" style="font-size: 0.75rem;">
+            <hr>
+            <p class="mb-0">&copy; Nico Trilles. All rights reserved.</p>
+            </div>
+        </div>
+        </footer>
+    </div>
+    
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmLogout()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const menuIcon = document.getElementById('menu-icon');
+            
+            sidebarOpen = !sidebarOpen;
+            
+            if (sidebarOpen) {
+                sidebar.classList.remove('closed');
+                sidebar.classList.add('open');
+                mainContent.classList.remove('sidebar-closed');
+                mainContent.classList.add('sidebar-open');
+                menuIcon.innerHTML = '✕';
+            } else {
+                sidebar.classList.remove('open');
+                sidebar.classList.add('closed');
+                mainContent.classList.remove('sidebar-open');
+                mainContent.classList.add('sidebar-closed');
+                menuIcon.innerHTML = '☰';
+            }
+        }
+
+        function showContent(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active menu item
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        // Add this new function for the logout modal
+        function confirmLogout() {
+            // This is where you would handle the actual logout logic
+            // e.g., redirect to the login page, clear session, etc.
+            alert('Logging out...');
+            // Example: redirect to a login page
+            window.location.href = '/login'; 
+        }
+
+        // Button functionality
+        function viewProject(project) {
+            alert(`Viewing project: ${project}. This would typically open a detailed project view.`);
+        }
+
+        function viewProfile(person) {
+            alert(`Viewing profile for: ${person}. This would show detailed team member information.`);
+        }
+
+        function readPost(post) {
+            alert(`Opening blog post: ${post}. This would navigate to the full article.`);
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+        }
+
+        function scheduleCall() {
+            alert('Opening calendar to schedule a call. This would integrate with a booking system.');
+        }
+
+        function saveSettings() {
+            alert('Settings saved successfully!');
+        }
+
+        function updateAccount() {
+            alert('Account updated successfully!');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && sidebarOpen && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                toggleSidebar();
+            }
+        });
+    </script>
+</body>
+</html>
