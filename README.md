@@ -1,2 +1,2 @@
 # websystem
-for school activity yeah lol
+for school activity yeah
