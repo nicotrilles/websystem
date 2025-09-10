@@ -5,30 +5,8 @@ html, body {
   height: 100%;
   overflow-x: hidden;
   scroll-behavior: smooth;
-
+  background-image:url()
 }
-
-/* --- BACKGROUND ANIMATION --- */
-/* Apply a background to the body and animate it */
-body {
-  background: linear-gradient(-45deg, #4A90E2, #50E3C2, #B86BFF, #6BFFB2);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-}
-
-/* Define the keyframes for the animation */
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-/* --- END OF BACKGROUND ANIMATION --- */
 
 /* Make the homepage section a full-screen viewport block */
 .Homepage {
@@ -43,7 +21,32 @@ body {
 
 .Homepage h1 {
     font-size: 100px;
+    animation: changeFont 2s infinite; /* 6s duration, runs forever */
 }
+
+@keyframes changeFont {
+  20% {
+    font-family: "Georgia", serif; /* Start with Georgia */
+  }
+  33% {
+    font-family: "Arial", sans-serif; /* Switch to Arial */
+  }
+  66% {
+    font-family: "Courier New", monospace; /* Switch to Courier New */
+  }
+  75% {
+    font-family: "Georgia", serif; /* Return to Georgia to complete the cycle */
+  }
+
+  85% {
+    font-family: 'Courier Prime', monospace;
+  }
+   100% {
+    font-family: 'Roboto', sans-serif;
+    }
+
+}
+
 /* Ensure other sections are also full-screen for the "page-by-page" effect */
 #about, #gallery, #hobby, #contact {
   height: 100vh;
@@ -57,10 +60,10 @@ nav {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    backdrop-filter: blur(10px); /* Adds a subtle blur effect behind the nav bar */
+    /*background-color: rgb(0, 0, 0); /* Still your black background */
+    backdrop-filter: blur(10px);
     z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* A more pronounced shadow for depth */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
 }
 
@@ -69,47 +72,51 @@ nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex; /* Use flexbox for horizontal alignment */
-    justify-content: center; /* Center the links horizontally */
+    display: flex;
+    justify-content: center;
     align-items: center;
-    height: 50px; /* Set a fixed height for the nav bar */
+    height: 50px;
 }
 
 /* Individual list items */
 nav ul li {
-    margin: 0 15px; /* Add some space between links */
+    margin: 0 15px;
 }
 
 /* The links themselves */
+/* The links themselves */
 nav ul li a {
     display: block;
-    padding: 10px 15px;
+    padding: 15px 25px;
     text-decoration: none;
-    color: #333; /* Default text color */
-    font-weight: bold;
-    position: relative; /* Needed for the hover effect line */
+    color: #0e0d0d; /* Default text color */
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    position: relative; /* Needed for the hover effect */
     transition: color 0.3s ease;
+    z-index: 1; /* Ensure link text is above the pseudo-element background */
+    overflow: hidden; /* This is crucial to hide the box before it animates down */
 }
 
-/* Hover and Active effects for links */
+/* The pseudo-element for the rectangular background */
 nav ul li a::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: #e73c7e; /* Pink-ish color for the underline */
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0; /* Start with height 0, making it invisible */
+    background-color: #8f8c8cb3;
+    transition: height 0.3s ease; /* Animate only the height property */
+    z-index: -1; /* Place it behind the link text */
 }
 
+/* Hover effects for links */
 nav ul li a:hover {
-    color: #e73c7e;
+    color: #ffffff; /* Keep text white or change as desired for contrast */
 }
 
 nav ul li a:hover::after {
-    width: 100%;
+    height: 100%; /* Expand to full height on hover */
 }
 
 /* --- ABOUT ME SECTION --- */
@@ -129,8 +136,8 @@ nav ul li a:hover::after {
     align-items: center;
     width: 80%;
     padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
+    background-color: #d4d3d4;
+    border-radius: 20px;
 }
 
 .left-side {
@@ -222,7 +229,7 @@ nav ul li a:hover::after {
 }
 
 .personal-description, .student-info {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.6;
 }
 
@@ -242,7 +249,11 @@ nav ul li a:hover::after {
     align-items: stretch; /* This ensures both columns stretch to the same height */
     gap: 20px;
     width: 85%;
-    height: 85%;
+    height: 82%;
+    background-color: #8f8c8cb3;
+    padding: 15px;
+    border-radius: 15px;
+    
 }
 
 .gallery-column {
@@ -360,6 +371,7 @@ nav ul li a:hover::after {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    
 }
 
 .hobby-content-container {
@@ -371,8 +383,9 @@ nav ul li a:hover::after {
     height: 80%;
     gap: 10px;
     border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    box-shadow: 0 4px 8px #8f8c8cb3;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .hobby-image-gallery {
@@ -388,15 +401,17 @@ nav ul li a:hover::after {
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    font-family: roborto;
 }
 
 .image-with-text {
     position: relative;
-    width: 300px;
-    height: 200px;
+    width: 200px;
+    height: 100px;
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .image-with-text img {
@@ -450,6 +465,7 @@ nav ul li a:hover::after {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .project-image-gallery {
@@ -570,6 +586,7 @@ footer {
     color: #fff;
     text-align: center;
     width: 100%;
+    height: 50%;
 }
 
 .footer-content {
