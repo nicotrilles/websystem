@@ -548,6 +548,64 @@ nav ul li a:hover::after {
     background-color: #357abd;
 }
 
+.social-link:hover {
+    transform: scale(1.1);
+    background-color: #357abd;
+}
+
+/* Additional styles for contact form inputs */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.contact-input,
+.contact-textarea {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-color: white;
+    font-size: clamp(14px, 2.5vw, 16px);
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+    outline: none;
+    border-color: #4A90E2;
+}
+
+.contact-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.send-button {
+    background-color: #4A90E2 !important;
+    color: white !important;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #357abd !important;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+    background-color: #000000;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+}
+
 /* Footer */
 footer {
     background-color: #000000;

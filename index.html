@@ -160,39 +160,32 @@
             </div>
         </div>
     </div>
-
+    
     <!--contact section-->
     <div class="Contact" id="contact">
         <div class="contact-content-container">
             <h1>Get In Touch</h1>
-            <div class="contact-info">
+            <form class="contact-form" action="#" method="POST">
+                <div class="contact-item">
+                    <i class="fas fa-user contact-icon"></i>
+                    <input type="text" name="name" placeholder="Your Name" required class="contact-input">
+                </div>
+                
                 <div class="contact-item">
                     <i class="fas fa-envelope contact-icon"></i>
-                    <a href="mailto:nicotrilles.email@example.com" class="contact-text">nicotrilles.email@example.com</a>
+                    <input type="email" name="email" placeholder="Your Email" required class="contact-input">
                 </div>
+                
                 <div class="contact-item">
-                    <i class="fas fa-phone contact-icon"></i>
-                    <span class="contact-text">0990-909-9009</span>
+                    <i class="fas fa-comment contact-icon"></i>
+                    <textarea name="message" placeholder="Your Message" rows="4" required class="contact-textarea"></textarea>
                 </div>
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt contact-icon"></i>
-                    <span class="contact-text">Panabo City, Davao del Norte, Philippines</span>
-                </div>
-            </div>
-            <div class="social-links">
-                <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="social-link">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://twitter.com/yourprofile" target="_blank" class="social-link">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://github.com/yourprofile" target="_blank" class="social-link">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.facebook.com/yourprofile" target="_blank" class="social-link">
-                    <i class="fab fa-facebook"></i>
-                </a>
-            </div>
+                
+                <button type="submit" class="contact-item send-button">
+                    <i class="fas fa-paper-plane contact-icon"></i>
+                    <span class="contact-text">Send Message</span>
+                </button>
+            </form>
         </div>
     </div>
     
