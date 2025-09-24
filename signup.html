@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signin-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .signin-header {
+            margin-bottom: 10px;
+        }
+
+        .signin-header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #a0a6b0;
+        }
+
+        .signin-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #2586ef, #007bff);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .signin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .signin-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .signin-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .password-requirements {
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .requirement {
+            font-size: 11px;
+            margin: 3px 0;
+            color: #e74c3c;
+            transition: color 0.3s ease;
+        }
+
+        .requirement.valid {
+            color: #27ae60;
+        }
+
+        .form-input.error {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .form-input.success {
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+            .signin-container {
+                padding: 35px 25px;
+                margin: 10px;
+            }
+
+            .signin-header h1 {
+                font-size: 28px;
+            }
+    </style>
+</head>
+<body>
+    <div class="signin-container">
+        <div class="signin-header">
+            <h1>Create Account</h1>
+            <p>Sign up</p>
+        </div>
+        
+        <form id="signinForm">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input 
+                    type="text" 
+                    id="fullName" 
+                    name="fullName" 
+                    class="form-input" 
+                    placeholder="Enter your full name"
+                    required
+                >
+                <div class="error-message" id="fullNameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="Enter your email address"
+                    required
+                >
+                <div class="error-message" id="emailError"></div>
+                <div class="success-message" id="emailSuccess"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Create a strong password"
+                    required
+                >
+                <div class="password-requirements">
+                    <div class="requirement" id="length">✗ At least 8 characters</div>
+                    <div class="requirement" id="uppercase">✗ One uppercase letter</div>
+                    <div class="requirement" id="lowercase">✗ One lowercase letter</div>
+                    <div class="requirement" id="number">✗ One number</div>
+                    <div class="requirement" id="special">✗ One special character (@$!%*?&)</div>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    class="form-input" 
+                    placeholder="Confirm your password"
+                    required
+                >
+                <div class="error-message" id="confirmPasswordError"></div>
+                <div class="success-message" id="confirmPasswordSuccess"></div>
+            </div>
+            
+            <button type="submit" class="signin-btn">Sign Up</button>
+            
+            <div class="login-link">
+                Already have an account? <a href="#" onclick="goToLogin()">Log in</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function goToLogin() {
+            // Store signed up users
+            const users = JSON.parse(localStorage.getItem('signedUpUsers') || '[]');
+            localStorage.setItem('signedUpUsers', JSON.stringify(users));
+            
+            // Redirect to login page
+            document.body.innerHTML = ` `;
+            
+            // Initialize login functionality
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 100);
+        }
+
+        function initLogin() {
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.querySelector('.login-btn');
+
+            if (!loginForm || !loginBtn) {
+                setTimeout(initLogin, 100);
+                return;
+            }
+
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                loginBtn.textContent = 'Logging In...';
+                loginBtn.disabled = true;
+
+                const emailInput = document.getElementById('loginEmail').value.trim();
+                const passwordInput = document.getElementById('loginPassword').value;
+
+                const users = JSON.parse(localStorage.getItem('signedUpUsers') || '[]');
+                const user = users.find(u => u.email === emailInput && u.password === passwordInput);
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailInput || !passwordInput) {
+                    alert('Please fill in all fields.');
+                    resetButton();
+                } else if (!emailRegex.test(emailInput)) {
+                    alert('Please enter a valid email address.');
+                    resetButton();
+                } else if (!user) {
+                    alert('❌ Invalid email or password. Please check your credentials or sign up first.');
+                    resetButton();
+                } else {
+                    alert('✅ Login successful! Welcome back, ' + user.fullName + '!');
+                    setTimeout(() => {
+                        showCalculator();
+                    }, 500);
+                }
+
+                function resetButton() {
+                    loginBtn.textContent = 'Log In';
+                    loginBtn.disabled = false;
+                }
+            });
+        }
+
+        // Real-time validation functions
+        function validateFullName() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const fullNameError = document.getElementById('fullNameError');
+            const fullNameInput = document.getElementById('fullName');
+            
+            if (fullName.length === 0) {
+                fullNameError.style.display = 'none';
+                fullNameInput.classList.remove('error', 'success');
+                return false;
+            } else if (fullName.length < 2) {
+                fullNameError.textContent = '❌ Full name must be at least 2 characters long';
+                fullNameError.style.display = 'block';
+                fullNameInput.classList.add('error');
+                fullNameInput.classList.remove('success');
+                return false;
+            } else {
+                fullNameError.style.display = 'none';
+                fullNameInput.classList.remove('error');
+                fullNameInput.classList.add('success');
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('email').value.trim();
+            const emailError = document.getElementById('emailError');
+            const emailSuccess = document.getElementById('emailSuccess');
+            const emailInput = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email.length === 0) {
+                emailError.style.display = 'none';
+                emailSuccess.style.display = 'none';
+                emailInput.classList.remove('error', 'success');
+                return false;
+            } else if (!emailRegex.test(email)) {
+                emailError.textContent = '❌ Please enter a valid email address (must contain @)';
+                emailError.style.display = 'block';
+                emailSuccess.style.display = 'none';
+                emailInput.classList.add('error');
+                emailInput.classList.remove('success');
+                return false;
+            } else {
+                emailError.style.display = 'none';
+                emailSuccess.textContent = '✅ Valid email format';
+                emailSuccess.style.display = 'block';
+                emailInput.classList.remove('error');
+                emailInput.classList.add('success');
+                return true;
+            }
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const passwordInput = document.getElementById('password');
+            
+            // Check each requirement
+            const length = password.length >= 8;
+            const uppercase = /[A-Z]/.test(password);
+            const lowercase = /[a-z]/.test(password);
+            const number = /\d/.test(password);
+            const special = /[@$!%*?&]/.test(password);
+            
+            // Update requirement indicators
+            document.getElementById('length').classList.toggle('valid', length);
+            document.getElementById('length').textContent = (length ? '✓' : '✗') + ' At least 8 characters';
+            
+            document.getElementById('uppercase').classList.toggle('valid', uppercase);
+            document.getElementById('uppercase').textContent = (uppercase ? '✓' : '✗') + ' One uppercase letter';
+            
+            document.getElementById('lowercase').classList.toggle('valid', lowercase);
+            document.getElementById('lowercase').textContent = (lowercase ? '✓' : '✗') + ' One lowercase letter';
+            
+            document.getElementById('number').classList.toggle('valid', number);
+            document.getElementById('number').textContent = (number ? '✓' : '✗') + ' One number';
+            
+            document.getElementById('special').classList.toggle('valid', special);
+            document.getElementById('special').textContent = (special ? '✓' : '✗') + ' One special character (@$!%*?&)';
+            
+            const allValid = length && uppercase && lowercase && number && special;
+            
+            if (password.length === 0) {
+                passwordInput.classList.remove('error', 'success');
+            } else if (allValid) {
+                passwordInput.classList.remove('error');
+                passwordInput.classList.add('success');
+            } else {
+                passwordInput.classList.add('error');
+                passwordInput.classList.remove('success');
+            }
+            
+            return allValid;
+        }
+
+        function validateConfirmPassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            const confirmPasswordSuccess = document.getElementById('confirmPasswordSuccess');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            
+            if (confirmPassword.length === 0) {
+                confirmPasswordError.style.display = 'none';
+                confirmPasswordSuccess.style.display = 'none';
+                confirmPasswordInput.classList.remove('error', 'success');
+                return false;
+            } else if (password !== confirmPassword) {
+                confirmPasswordError.textContent = '❌ Passwords do not match';
+                confirmPasswordError.style.display = 'block';
+                confirmPasswordSuccess.style.display = 'none';
+                confirmPasswordInput.classList.add('error');
+                confirmPasswordInput.classList.remove('success');
+                return false;
+            } else {
+                confirmPasswordError.style.display = 'none';
+                confirmPasswordSuccess.textContent = '✅ Passwords match';
+                confirmPasswordSuccess.style.display = 'block';
+                confirmPasswordInput.classList.remove('error');
+                confirmPasswordInput.classList.add('success');
+                return true;
+            }
+        }
+
+        // Add real-time validation event listeners
+        document.getElementById('fullName').addEventListener('input', validateFullName);
+        document.getElementById('email').addEventListener('input', validateEmail);
+        document.getElementById('password').addEventListener('input', function() {
+            validatePassword();
+            if (document.getElementById('confirmPassword').value.length > 0) {
+                validateConfirmPassword();
+            }
+        });
+        document.getElementById('confirmPassword').addEventListener('input', validateConfirmPassword);
+
+        // Initialize sign-in form
+        document.getElementById('signinForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const signinBtn = document.querySelector('.signin-btn');
+            signinBtn.textContent = 'Creating Account...';
+            signinBtn.disabled = true;
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Email validation - must contain @ symbol
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            // Password validation - uppercase, lowercase, number, special character, 8+ chars
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            
+            function resetButton() {
+                signinBtn.textContent = 'Sign Up';
+                signinBtn.disabled = false;
+            }
+            
+            // Check if all fields are filled
+            if (!fullName || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields.');
+                resetButton();
+                return;
+            }
+            
+            // Validate full name (at least 2 characters)
+            if (fullName.length < 2) {
+                alert('Full name must be at least 2 characters long.');
+                resetButton();
+                return;
+            }
+            
+            // Validate email format
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address (must contain @ symbol).');
+                resetButton();
+                return;
+            }
+            
+            // Validate password strength
+            if (!passwordRegex.test(password)) {
+                alert('Password must contain:\n• At least 8 characters\n• One uppercase letter (A-Z)\n• One lowercase letter (a-z)\n• One number (0-9)\n• One special character (@$!%*?&)');
+                resetButton();
+                return;
+            }
+            
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match. Please try again.');
+                resetButton();
+                return;
+            }
+            
+            // Store user data (in a real app, this would be sent to a server)
+            const users = JSON.parse(localStorage.getItem('signedUpUsers') || '[]');
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                alert('An account with this email already exists. Please use a different email or login.');
+                resetButton();
+                return;
+            }
+            
+            // Save new user
+            users.push({
+                fullName,
+                email,
+                password
+            });
+            
+            localStorage.setItem('signedUpUsers', JSON.stringify(users));
+            
+            alert('🎉 Account created successfully!');
+            setTimeout(() => {
+                 window.location.href = "login.html"; 
+            }, 500);
+        });
+    </script>
+</body>
+</html>
