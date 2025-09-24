@@ -1,145 +1,81 @@
 let display = document.getElementById('display');
 let currentInput = '';
-let previousInput = '';
-let operator = '';
-let waitingForOperand = false;
+let expression = '';
 
 function updateDisplay() {
-    if (waitingForOperand && operator && !currentInput) {
-        // Show the operator only when waiting and no new input yet
-        display.textContent = (previousInput || '0') + ' ' + getOperatorSymbol(operator);
-    } else if (operator && currentInput && previousInput) {
-        // Show full expression when typing second number
-        display.textContent = previousInput + ' ' + getOperatorSymbol(operator) + ' ' + currentInput;
-    } else {
-        display.textContent = currentInput || '0';
-    }
-}
-
-function getOperatorSymbol(op) {
-    switch(op) {
-        case '+': return '+';
-        case '-': return '−';
-        case '*': return '×';
-        case '/': return '÷';
-        default: return op;
-    }
+    display.textContent = expression || '0';
 }
 
 function inputNumber(num) {
-    if (waitingForOperand) {
-        currentInput = num;
-        waitingForOperand = false;
-    } else {
-        currentInput = currentInput === '0' ? num : currentInput + num;
+    if (expression.length > 0 && expression.slice(-1) === ')') {
+        return; // Don't append numbers after a closing parenthesis
     }
+    expression += num;
     updateDisplay();
 }
 
 function inputDecimal() {
-    if (waitingForOperand) {
-        currentInput = '0.';
-        waitingForOperand = false;
-    } else if (currentInput.indexOf('.') === -1) {
-        currentInput += '.';
+    // Check if the last part of the expression is a number and doesn't already have a decimal
+    const lastPart = expression.split(/[-+*/]/).pop();
+    if (!lastPart.includes('.')) {
+        if (expression === '' || expression.slice(-1).match(/[-+*/]/)) {
+            expression += '0.';
+        } else {
+            expression += '.';
+        }
+        updateDisplay();
     }
-    updateDisplay();
 }
 
-function inputOperator(nextOperator) {
-    const inputValue = parseFloat(currentInput);
-
-    if (previousInput === '') {
-        previousInput = inputValue;
-    } else if (operator && !waitingForOperand) {
-        // Calculate previous operation before setting new operator
-        const result = performCalculation();
-        
-        if (result === null) return;
-        
-        currentInput = String(result);
-        previousInput = result;
-        updateDisplay(); // Show the intermediate result briefly
+function inputOperator(op) {
+    // Prevent multiple operators in a row (e.g., 1++2)
+    const lastChar = expression.slice(-1);
+    if (lastChar.match(/[-+*/]/)) {
+        expression = expression.slice(0, -1) + op;
+    } else {
+        expression += op;
     }
-
-    waitingForOperand = true;
-    operator = nextOperator;
-    currentInput = ''; // Clear current input after setting operator
     updateDisplay();
-}
-
-function performCalculation() {
-    const prev = parseFloat(previousInput);
-    const current = parseFloat(currentInput);
-
-    if (isNaN(prev) || isNaN(current)) return null;
-
-    let result;
-    switch (operator) {
-        case '+':
-            result = prev + current;
-            break;
-        case '-':
-            result = prev - current;
-            break;
-        case '*':
-            result = prev * current;
-            break;
-        case '/':
-            if (current === 0) {
-                alert('Cannot divide by zero');
-                return null;
-            }
-            result = prev / current;
-            break;
-        default:
-            return null;
-    }
-
-    // Round to prevent floating point errors
-    return Math.round((result + Number.EPSILON) * 100000000) / 100000000;
 }
 
 function calculate() {
-    if (operator && !waitingForOperand) {
-        const result = performCalculation();
-        
-        if (result !== null) {
-            currentInput = String(result);
-            previousInput = '';
-            operator = '';
-            waitingForOperand = true;
-            updateDisplay();
+    try {
+        if (expression === '') {
+            return;
         }
+        // Use a safe evaluation function to calculate the expression
+        // eval() is generally unsafe, but for a simple calculator, it can be used with caution
+        // A more robust solution would be to write a custom expression parser
+        const result = new Function('return ' + expression)();
+        expression = String(result);
+        updateDisplay();
+    } catch (e) {
+        display.textContent = 'Error';
     }
 }
 
 function clearAll() {
-    currentInput = '';
-    previousInput = '';
-    operator = '';
-    waitingForOperand = false;
+    expression = '';
     updateDisplay();
 }
 
 function clearEntry() {
-    currentInput = '';
-    updateDisplay();
+    if (expression.length > 0) {
+        expression = expression.slice(0, -1);
+        updateDisplay();
+    }
 }
 
 function backspace() {
-    if (currentInput.length > 1) {
-        currentInput = currentInput.slice(0, -1);
-    } else {
-        currentInput = '';
+    if (expression.length > 0) {
+        expression = expression.slice(0, -1);
+        updateDisplay();
     }
-    updateDisplay();
 }
 
 // Keyboard support
 document.addEventListener('keydown', function(event) {
     const key = event.key;
-    
     if (key >= '0' && key <= '9') {
         inputNumber(key);
     } else if (key === '.') {
