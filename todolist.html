@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Todo Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2586ef, #007bff);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        /* Enhanced Input Section */
+        .input-section {
+            padding: 30px;
+            background: #f8f9ff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .title-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .content-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .title-input:focus, .content-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2586ef, #007bff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2586ef, #007bff);
+            color: white;
+        }
+
+        /* Todo Items */
+        .todos-section {
+            padding: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            position: relative;
+            background: white;
+            border: 2px solid #f1f3f4;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+
+        .todo-item:hover {
+            background: linear-gradient(135deg, #2586ef, #007bff);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-item.completed {
+            opacity: 0.7;
+            background: #f8f9fa;
+        }
+
+        .todo-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #d1d5db;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .todo-checkbox.checked {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .todo-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.3s ease;
+        }
+
+        .todo-title.completed {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .todo-content {
+            padding: 0 20px 20px 55px;
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .todo-item:hover .todo-content {
+            max-height: 200px;
+            opacity: 1;
+            padding-bottom: 20px;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .todo-item:hover .todo-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .view-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001; /* Higher z-index to be on top of the other modal */
+        }
+
+        .delete-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px; /* Adjust width as needed */
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .delete-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Stats */
+        .stats {
+            padding: 20px 30px;
+            background: #f8f9ff;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-text {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .clear-btn {
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-section, .todos-section, .stats {
+                padding: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .todo-header {
+                padding: 15px;
+            }
+            
+            .todo-actions {
+                flex-direction: column;
+                gap: 8px;
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                opacity: 1;
+                background: white;
+                border-radius: 8px;
+                padding: 5px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .todo-content {
+                padding-left: 20px;
+                max-height: none;
+                opacity: 1;
+                display: block;
+                margin-top: 10px;
+            }
+            
+            .modal-content, .delete-modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .filters {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-input, .content-input {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .todo-title {
+                font-size: 14px;
+            }
+            
+            .todo-content {
+                font-size: 13px;
+            }
+            
+            .action-btn {
+                padding: 6px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Task Manager</h1>
+            <p>Organize your tasks with titles and detailed content</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="titleInput">Task Title *</label>
+                <input type="text" id="titleInput" class="title-input" placeholder="Enter task title...">
+            </div>
+            
+            <div class="input-group">
+                <label for="contentInput">Task Description</label>
+                <textarea id="contentInput" class="content-input" placeholder="Add detailed description, notes, or instructions..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" id="saveBtn">
+                    <span id="saveBtnText">Create Task</span>
+                </button>
+                <button class="btn btn-secondary" id="cancelBtn" style="display: none;">Cancel</button>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Tasks</button>
+                <button class="filter-btn" data-filter="active">Active</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+            </div>
+        </div>
+
+        <div class="todos-section" id="todosContainer">
+            <div class="empty-state" id="emptyState">
+                <h3>No tasks yet</h3>
+                <p>Create your first task using the form above!</p>
+            </div>
+        </div>
+
+        <div class="stats" id="statsSection" style="display: none;">
+            <div class="stats-text" id="statsText">0 tasks remaining</div>
+            <button class="clear-btn" id="clearBtn">Clear Completed</button>
+        </div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Task Details</h3>
+                <button class="close-btn" onclick="app.closeModal()">&times;</button>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Delete Task</h3>
+                <button class="close-btn" onclick="app.closeDeleteModal()">&times;</button>
+            </div>
+            <p id="deleteMessage">Are you sure you want to delete this task?</p>
+            <div class="delete-actions">
+                <button class="btn btn-primary" id="confirmDeleteBtn">Delete</button>
+                <button class="btn btn-secondary" onclick="app.closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TodoApp {
+            constructor() {
+                this.todos = JSON.parse(localStorage.getItem('todos')) || [];
+                this.currentFilter = 'all';
+                this.editingId = null;
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.render();
+            }
+
+            initializeElements() {
+                this.titleInput = document.getElementById('titleInput');
+                this.contentInput = document.getElementById('contentInput');
+                this.saveBtn = document.getElementById('saveBtn');
+                this.saveBtnText = document.getElementById('saveBtnText');
+                this.cancelBtn = document.getElementById('cancelBtn');
+                this.todosContainer = document.getElementById('todosContainer');
+                this.emptyState = document.getElementById('emptyState');
+                this.statsSection = document.getElementById('statsSection');
+                this.statsText = document.getElementById('statsText');
+                this.clearBtn = document.getElementById('clearBtn');
+                this.filterBtns = document.querySelectorAll('.filter-btn');
+                this.taskModal = document.getElementById('taskModal');
+                this.modalTitle = document.getElementById('modalTitle');
+                this.modalContent = document.getElementById('modalContent');
+                this.deleteModal = document.getElementById('deleteModal');
+                this.deleteMessage = document.getElementById('deleteMessage');
+                this.confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+                this.todoToDelete = null;
+            }
+
+            bindEvents() {
+                this.saveBtn.addEventListener('click', () => this.saveTodo());
+                this.cancelBtn.addEventListener('click', () => this.cancelEdit());
+                
+                this.titleInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.contentInput.focus();
+                    }
+                });
+
+                this.contentInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        this.saveTodo();
+                    }
+                });
+
+                this.clearBtn.addEventListener('click', () => this.clearCompleted());
+
+                this.filterBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.currentFilter = e.target.dataset.filter;
+                        this.updateFilterButtons();
+                        this.render();
+                    });
+                });
+
+                // Close modal when clicking outside
+                this.taskModal.addEventListener('click', (e) => {
+                    if (e.target === this.taskModal) {
+                        this.closeModal();
+                    }
+                });
+
+                this.deleteModal.addEventListener('click', (e) => {
+                    if (e.target === this.deleteModal) {
+                        this.closeDeleteModal();
+                    }
+                });
+
+                this.confirmDeleteBtn.addEventListener('click', () => this.confirmDelete());
+            }
+
+            // CRUD Operations
+            saveTodo() {
+                const title = this.titleInput.value.trim();
+                const content = this.contentInput.value.trim();
+                
+                if (title === '') {
+                    this.titleInput.focus();
+                    return;
+                }
+
+                if (this.editingId) {
+                    // Update existing todo
+                    this.todos = this.todos.map(todo =>
+                        todo.id === this.editingId 
+                            ? { ...todo, title, content, updatedAt: new Date().toISOString() }
+                            : todo
+                    );
+                    this.editingId = null;
+                } else {
+                    // Create new todo
+                    const newTodo = {
+                        id: Date.now(),
+                        title,
+                        content,
+                        completed: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    this.todos.unshift(newTodo);
+                }
+
+                this.resetForm();
+                this.saveTodos();
+                this.render();
+            }
+
+            readTodo(id) {
+                const todo = this.todos.find(t => t.id === id);
+                if (todo) {
+                    this.showTaskDetail(todo);
+                }
+            }
+
+            updateTodo(id) {
+                const todo = this.todos.find(t => t.id === id);
+                if (todo) {
+                    this.editingId = id;
+                    this.titleInput.value = todo.title;
+                    this.contentInput.value = todo.content || '';
+                    this.saveBtnText.textContent = 'Update Task';
+                    this.cancelBtn.style.display = 'inline-block';
+                    this.titleInput.focus();
+                    this.titleInput.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            deleteTodo(id) {
+                const todo = this.todos.find(t => t.id === id);
+                if (todo) {
+                    this.todoToDelete = id;
+                    this.deleteMessage.textContent = `Are you sure you want to delete "${todo.title}"?`;
+                    this.deleteModal.style.display = 'block';
+                }
+            }
+
+            confirmDelete() {
+                if (this.todoToDelete) {
+                    this.todos = this.todos.filter(todo => todo.id !== this.todoToDelete);
+                    this.saveTodos();
+                    this.render();
+                    this.closeDeleteModal();
+                }
+            }
+
+            closeDeleteModal() {
+                this.deleteModal.style.display = 'none';
+                this.todoToDelete = null;
+            }
+
+            toggleTodo(id) {
+                this.todos = this.todos.map(todo =>
+                    todo.id === id ? { 
+                        ...todo, 
+                        completed: !todo.completed,
+                        updatedAt: new Date().toISOString()
+                    } : todo
+                );
+                this.saveTodos();
+                this.render();
+            }
+
+            clearCompleted() {
+                if (confirm('Delete all completed tasks?')) {
+                    this.todos = this.todos.filter(todo => !todo.completed);
+                    this.saveTodos();
+                    this.render();
+                }
+            }
+
+            resetForm() {
+                this.titleInput.value = '';
+                this.contentInput.value = '';
+                this.saveBtnText.textContent = 'Create Task';
+                this.cancelBtn.style.display = 'none';
+                this.editingId = null;
+            }
+
+            cancelEdit() {
+                this.resetForm();
+            }
+
+            getFilteredTodos() {
+                switch (this.currentFilter) {
+                    case 'active':
+                        return this.todos.filter(todo => !todo.completed);
+                    case 'completed':
+                        return this.todos.filter(todo => todo.completed);
+                    default:
+                        return this.todos;
+                }
+            }
+
+            updateFilterButtons() {
+                this.filterBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === this.currentFilter);
+                });
+            }
+
+            createTodoElement(todo) {
+                const div = document.createElement('div');
+                div.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                
+                div.innerHTML = `
+                    <div class="todo-header">
+                        <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="app.toggleTodo(${todo.id})"></div>
+                        <div class="todo-title ${todo.completed ? 'completed' : ''}">${todo.title}</div>
+                        <div class="todo-actions">
+                            <button class="action-btn view-btn" onclick="app.readTodo(${todo.id})" title="View Details">👁</button>
+                            <button class="action-btn edit-btn" onclick="app.updateTodo(${todo.id})" title="Edit">✎</button>
+                            <button class="action-btn delete-btn" onclick="app.deleteTodo(${todo.id})" title="Delete">✕</button>
+                        </div>
+                    </div>
+                    ${todo.content ? `<div class="todo-content">${todo.content}</div>` : ''}
+                `;
+
+                return div;
+            }
+
+            showTaskDetail(todo) {
+                this.modalTitle.textContent = todo.title;
+                this.modalContent.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Status:</strong> ${todo.completed ? 'Completed' : 'Active'}
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <strong>Created:</strong> ${new Date(todo.createdAt).toLocaleString()}
+                    </div>
+                    ${todo.updatedAt !== todo.createdAt ? `
+                        <div style="margin-bottom: 15px;">
+                            <strong>Updated:</strong> ${new Date(todo.updatedAt).toLocaleString()}
+                        </div>
+                    ` : ''}
+                    ${todo.content ? `
+                        <div style="margin-bottom: 15px;">
+                            <strong>Description:</strong>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 8px; white-space: pre-wrap;">${todo.content}</div>
+                        </div>
+                    ` : ''}
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="app.updateTodo(${todo.id}); app.closeModal();">Edit Task</button>
+                        <button class="btn btn-secondary" onclick="app.toggleTodo(${todo.id}); app.closeModal();">
+                            ${todo.completed ? 'Mark Active' : 'Mark Complete'}
+                        </button>
+                    </div>
+                `;
+                this.taskModal.style.display = 'block';
+            }
+
+            closeModal() {
+                this.taskModal.style.display = 'none';
+            }
+
+            updateStats() {
+                const activeCount = this.todos.filter(todo => !todo.completed).length;
+                const completedCount = this.todos.filter(todo => todo.completed).length;
+                
+                this.statsText.textContent = `${activeCount} task${activeCount !== 1 ? 's' : ''} remaining`;
+                this.clearBtn.style.display = completedCount > 0 ? 'block' : 'none';
+            }
+
+            // Remove unused navigation methods
+            updateNavStats() {
+                // Method removed - no navigation bar
+            }
+
+            render() {
+                const filteredTodos = this.getFilteredTodos();
+                
+                if (this.todos.length === 0) {
+                    this.emptyState.style.display = 'block';
+                    this.statsSection.style.display = 'none';
+                    this.todosContainer.innerHTML = '';
+                    this.todosContainer.appendChild(this.emptyState);
+                } else {
+                    this.emptyState.style.display = 'none';
+                    this.statsSection.style.display = 'flex';
+                    this.todosContainer.innerHTML = '';
+                    
+                    if (filteredTodos.length === 0) {
+                        const noResults = document.createElement('div');
+                        noResults.className = 'empty-state';
+                        noResults.innerHTML = `
+                            <h3>No ${this.currentFilter} tasks</h3>
+                            <p>Try switching to a different filter.</p>
+                        `;
+                        this.todosContainer.appendChild(noResults);
+                    } else {
+                        filteredTodos.forEach(todo => {
+                            this.todosContainer.appendChild(this.createTodoElement(todo));
+                        });
+                    }
+                    
+                    this.updateStats();
+                }
+            }
+
+            // Navigation methods
+            showAll() {
+                this.currentFilter = 'all';
+                this.updateFilterButtons();
+                this.render();
+            }
+
+            exportTodos() {
+                const data = JSON.stringify(this.todos, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `todos-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            showStats() {
+                const total = this.todos.length;
+                const completed = this.todos.filter(t => t.completed).length;
+                const active = total - completed;
+                const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                alert(`Task Statistics:\n\nTotal Tasks: ${total}\nActive: ${active}\nCompleted: ${completed}\nCompletion Rate: ${completionRate}%`);
+            }
+
+            showHelp() {
+                alert('Todo Manager Help:\n\n• Create tasks with titles and descriptions\n• Hover over tasks to see full content\n• Use CRUD operations: Create, Read, Update, Delete\n• Filter tasks by status\n• Export your data\n• Ctrl+Enter to save while typing');
+            }
+
+            saveTodos() {
+                localStorage.setItem('todos', JSON.stringify(this.todos));
+            }
+
+            deleteTodo(id) {
+            const todo = this.todos.find(t => t.id === id);
+            if (todo) {
+                this.todoToDelete = id;
+                this.deleteMessage.textContent = `Are you sure you want to delete "${todo.title}"?`;
+                this.deleteModal.style.display = 'block'; // This line makes the modal visible
+            }
+            }
+        }
+
+        // Initialize the app
+        const app = new TodoApp();
+    </script>
+</body>
+</html>
