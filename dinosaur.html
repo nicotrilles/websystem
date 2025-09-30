@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="media/dino.png">
+    <title>Daynosaur Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #highScore {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .game {
+            width: 600px;
+            height: 200px;
+            border: 1px solid black;
+            margin: auto;
+            position: relative;
+        }
+
+        #dino {
+            width: 50px;
+            height: 50px;
+            background-image: url(media/trex.png);
+            background-size: 50px 50px;
+            position: relative;
+            top: 150px;
+        }
+
+        .jump {
+            animation: jump 0.3s linear;
+        }
+
+        @keyframes jump {
+            0% { top: 150px; }
+            30% { top: 130px; }
+            50% { top: 80px; }
+            80% { top: 130px; }
+            100% { top: 150px; }
+        }
+
+        #cactus {
+            width: 20px;
+            height: 40px;
+            position: relative;
+            top: 110px;
+            left: 580px;
+            background-image: url("media/cactus.png");
+            background-size: 20px 40px;
+        }
+
+        .cactus-animate {
+            animation: block 1s infinite linear;
+        }
+
+        @keyframes block {
+            0% { left: 580px; }
+            100% { left: -20px; }
+        }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #gameOver.show {
+            display: block;
+        }
+
+        #gameOver h2 {
+            margin: 0 0 15px 0;
+        }
+
+        #restartBtn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #restartBtn:hover {
+            background: #45a049;
+        }
+
+        .instructions {
+            margin-top: 15px;
+            color: #666;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="highScore">High Score: 0</div>
+    <div id="score">Score: 0</div>
+    <div class="game">
+      <div id="dino"></div>
+      <div id="cactus" class="cactus-animate"></div>
+      <div id="gameOver">
+        <h2>Game Over!</h2>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <button id="restartBtn">Restart Game</button>
+      </div>
+    </div>
+    <div class="instructions">Press SPACE to jump</div>
+
+    <script>
+        const dino = document.getElementById("dino");
+        const cactus = document.getElementById("cactus");
+        const scoreDisplay = document.getElementById("score");
+        const highScoreDisplay = document.getElementById("highScore");
+        const gameOverDiv = document.getElementById("gameOver");
+        const finalScoreSpan = document.getElementById("finalScore");
+        const restartBtn = document.getElementById("restartBtn");
+
+        let score = 0;
+        let highScore = 0;
+        let isAlive = null;
+        let gameRunning = true;
+
+        // Load high score
+        const savedHighScore = parseInt(localStorage.getItem('dinoHighScore')) || 0;
+        highScore = savedHighScore;
+        highScoreDisplay.textContent = "High Score: " + highScore;
+
+        function jump() {
+            if (!gameRunning) return;
+            if (!dino.classList.contains("jump")) {
+                dino.classList.add("jump");
+                setTimeout(function () {
+                    dino.classList.remove("jump");
+                }, 300);
+            }
+        }
+
+        function startGame() {
+            score = 0;
+            gameRunning = true;
+            scoreDisplay.textContent = "Score: 0";
+            gameOverDiv.classList.remove("show");
+            cactus.style.left = "580px";
+            cactus.classList.add("cactus-animate");
+
+            if (isAlive) clearInterval(isAlive);
+
+            let scored = false;
+
+            isAlive = setInterval(function () {
+                let dinoTop = parseInt(window.getComputedStyle(dino).getPropertyValue("top"));
+                let cactusLeft = parseInt(window.getComputedStyle(cactus).getPropertyValue("left"));
+
+                // Cactus collision detection
+                if (cactusLeft < 50 && cactusLeft > 0 && dinoTop >= 140) {
+                    gameOver();
+                }
+
+                // Score tracking - when cactus passes the dino
+                if (cactusLeft < 0 && !scored && gameRunning) {
+                    score++;
+                    scoreDisplay.textContent = "Score: " + score;
+                    scored = true;
+                }
+
+                // Reset scored flag when cactus resets
+                if (cactusLeft > 500) {
+                    scored = false;
+                }
+            }, 10);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(isAlive);
+            cactus.classList.remove("cactus-animate");
+            finalScoreSpan.textContent = score;
+            
+            // Update high score
+            if (score > highScore) {
+                highScore = score;
+                highScoreDisplay.textContent = "High Score: " + highScore;
+                localStorage.setItem('dinoHighScore', highScore);
+            }
+            
+            gameOverDiv.classList.add("show");
+        }
+
+        // Space bar or any key
+        document.addEventListener("keydown", function (event) {
+            if (event.code === "Space" || event.key === " ") {
+                event.preventDefault();
+            }
+            jump();
+        });
+
+        // Click to jump
+        document.addEventListener("click", function (event) {
+            if (event.target !== restartBtn) {
+                jump();
+            }
+        });
+
+        // Restart button
+        restartBtn.addEventListener("click", function() {
+            startGame();
+        });
+
+        // Start game on load
+        startGame();
+    </script>
+  </body>
+</html>

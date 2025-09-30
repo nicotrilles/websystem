@@ -32,12 +32,17 @@ html, body {
 }
 
 @keyframes changeFont {
-    20% { font-family: "Georgia", serif; }
-    33% { font-family: "Arial", sans-serif; }
-    66% { font-family: "Courier New", monospace; }
-    75% { font-family: "Georgia", serif; }
-    85% { font-family: 'Courier Prime', monospace; }
-    100% { font-family: 'Roboto', sans-serif; }
+    0% { font-family: 'Times New Roman', serif; } /* Start/initial font */
+    10% { font-family: 'Arial', sans-serif; }
+    20% { font-family: 'Georgia', serif; }
+    30% { font-family: 'Verdana', sans-serif; }
+    40% { font-family: 'Courier New', monospace; }
+    50% { font-family: 'Tahoma', sans-serif; }
+    60% { font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; }
+    70% { font-family: 'Lucida Console', 'Courier New', monospace; }
+    80% { font-family: 'Trebuchet MS', sans-serif; }
+    90% { font-family: 'Impact', 'Charcoal', sans-serif; }
+    100% { font-family: 'Roboto', sans-serif; } /* Final font */
 }
 
 /* Sections */
