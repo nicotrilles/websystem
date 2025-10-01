@@ -37,7 +37,7 @@
         #dino {
             width: 50px;
             height: 50px;
-            background-image: url(media/trex.png);
+            background-image: url(media/dino.png);
             background-size: 50px 50px;
             position: relative;
             top: 150px;
@@ -61,7 +61,7 @@
             position: relative;
             top: 110px;
             left: 580px;
-            background-image: url("media/cactus.png");
+            background-image: url("media/cactus.png ");
             background-size: 20px 40px;
         }
 
@@ -115,12 +115,26 @@
             margin-top: 15px;
             color: #666;
         }
+
+        #gameCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0; /* behind dino and cactus */
+        }
+
+        #dino, #cactus, #gameOver {
+        position: relative;
+        z-index: 1; /* above canvas */
+        }
+
     </style>
   </head>
   <body>
     <div id="highScore">High Score: 0</div>
     <div id="score">Score: 0</div>
     <div class="game">
+    <canvas id="gameCanvas" width="600" height="200"></canvas>  
       <div id="dino"></div>
       <div id="cactus" class="cactus-animate"></div>
       <div id="gameOver">
@@ -139,6 +153,48 @@
         const gameOverDiv = document.getElementById("gameOver");
         const finalScoreSpan = document.getElementById("finalScore");
         const restartBtn = document.getElementById("restartBtn");
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let cloudX = 600;
+        let cloud2X = 300;
+
+function drawBackground() {
+  // clear sky
+  ctx.fillStyle = "#e0f7fa"; 
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // first cloud (your existing one)
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.arc(cloudX, 50, 20, 0, Math.PI * 2);
+  ctx.arc(cloudX + 20, 50, 25, 0, Math.PI * 2);
+  ctx.arc(cloudX + 40, 50, 20, 0, Math.PI * 2);
+  ctx.fill();
+
+  // second cloud (different shape, lower and flatter)
+  ctx.beginPath();
+  ctx.arc(cloud2X, 80, 15, 0, Math.PI * 2);
+  ctx.arc(cloud2X + 15, 75, 20, 0, Math.PI * 2);
+  ctx.arc(cloud2X + 35, 80, 15, 0, Math.PI * 2);
+  ctx.arc(cloud2X + 20, 85, 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  // move both clouds
+  cloudX -= 1;
+  cloud2X -= 0.5; // slower for parallax effect
+
+  // reset when off screen
+  if (cloudX < -60) cloudX = 600;
+  if (cloud2X < -60) cloud2X = 600;
+}
+    
+        // Call this repeatedly
+        setInterval(drawBackground, 50);
+
+        
+
+
 
         let score = 0;
         let highScore = 0;
